@@ -18,7 +18,7 @@ SCOPES = ['Sites.ReadWrite.All', 'Files.ReadWrite.All']  # Add other scopes/perm
 
 cognos_to_onedrive = msal.PublicClientApplication(_dict['client_id'], authority=AUTHORITY_URL)
 token = cognos_to_onedrive.acquire_token_by_username_password(_dict['username'], _dict['password'], SCOPES)
-headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
+# headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
 onedrive_destination = '{}/{}/me/drive/root:/'.format(RESOURCE_URL, API_VERSION)
 
 
@@ -30,14 +30,16 @@ def upload(files):
         file_name = _file
         if file_size < 4100000:
             # Perform is simple upload to the API
+            headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
             r = requests.put(onedrive_destination+"/"+file_name+":/content", data=file_data, headers=headers)
         else:
             # Creating an upload session
+            headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
             upload_session = requests.post(onedrive_destination+"/"+file_name+":/createUploadSession", headers=headers).json()
 
             with open(_file, 'rb') as f:
                 total_file_size = os.path.getsize(_file)
-                chunk_size = 327680
+                chunk_size = 62914560
                 chunk_number = total_file_size//chunk_size
                 chunk_leftover = total_file_size - chunk_size * chunk_number
                 i = 0
@@ -61,6 +63,7 @@ def upload(files):
 
 
 def download(files):
+    headers = {'Authorization': 'Bearer {}'.format(token['access_token'])}
     for _file in files:
         url = os.path.join(onedrive_destination, _file)
         url += ':/content'
