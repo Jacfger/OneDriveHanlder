@@ -78,10 +78,9 @@ parser.add_argument('-u')
 parser.add_argument('-d')
 parser.add_argument('-f', nargs='+')
 args = parser.parse_args()
-print(args.f)
 
 if args.u:
-    upload(f)
+    upload(args.f)
 
 if args.d:
-    download(f)
+    download(args.f)
