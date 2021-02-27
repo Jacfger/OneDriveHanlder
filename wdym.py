@@ -26,7 +26,8 @@ def upload(files):
     for _file in files:
         file_size = os.stat(_file).st_size
         file_data = open(_file, 'rb')
-        _, file_name = os.path.split(_file)
+        # _, file_name = os.path.split(_file)
+        file_name = _file
         if file_size < 4100000:
             # Perform is simple upload to the API
             r = requests.put(onedrive_destination+"/"+file_name+":/content", data=file_data, headers=headers)
@@ -73,9 +74,9 @@ def download(files):
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-f', nargs='+')
 parser.add_argument('-u')
 parser.add_argument('-d')
+parser.add_argument('-f', nargs='+')
 args = parser.parse_args()
 print(args.f)
 
