@@ -26,6 +26,7 @@ def upload(files):
     for _file in files:
         file_size = os.stat(_file).st_size
         file_data = open(_file, 'rb')
+        print(_file)
         # _, file_name = os.path.split(_file)
         file_name = _file
         if file_size < 4100000:
@@ -44,6 +45,7 @@ def upload(files):
                 chunk_leftover = total_file_size - chunk_size * chunk_number
                 i = 0
                 while True:
+                    print('    {}/{}'.format(chunk_size * i, total_file_size))
                     chunk_data = f.read(chunk_size)
                     start_index = i*chunk_size
                     end_index = start_index + chunk_size
@@ -56,8 +58,6 @@ def upload(files):
                     headers = {'Content-Length': '{}'.format(chunk_size), 'Content-Range': 'bytes {}-{}/{}'.format(start_index, end_index-1, total_file_size)}
                     # Upload one chunk at a time
                     chunk_data_upload = requests.put(upload_session['uploadUrl'], data=chunk_data, headers=headers)
-                    print(chunk_data_upload)
-                    print(chunk_data_upload.json())
                     i = i + 1
         file_data.close()
 
@@ -75,12 +75,19 @@ def download(files):
             f.write(r.content)
 
 import argparse
+import glob
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u')
 parser.add_argument('-d')
 parser.add_argument('-f', nargs='+')
+parser.add_argument('-g')
 args = parser.parse_args()
+
+if args.f:
+    files = args.f
+elif args.g:
+    files = glob.glob(args.g)
 
 if args.u:
     upload(args.f)
