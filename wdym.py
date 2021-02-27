@@ -90,7 +90,7 @@ elif args.g:
     files = glob.glob(args.g)
 
 if args.u:
-    upload(args.f)
+    upload(files)
 
 if args.d:
-    download(args.f)
+    download(files)
